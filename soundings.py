@@ -5,7 +5,7 @@ import metpy.calc as mpcalc
 from metpy.plots import add_metpy_logo, add_timestamp, SkewT, Hodograph
 from metpy.units import units
 from siphon.simplewebservice.wyoming import WyomingUpperAir
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import io
 import base64
 from pymongo import MongoClient
@@ -76,7 +76,7 @@ def generate_plot(site, date=None):
     if date:
         request_time = datetime.strptime(date, '%Y%m%d%H')
     else:
-        now = datetime.utcnow() - timedelta(hours=2)
+        now = datetime.now(timezone.utc) - timedelta(hours=2)
         request_time = now.replace(
             hour=(now.hour // 12) * 12, minute=0, second=0)
 

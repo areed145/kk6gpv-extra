@@ -1,15 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May  7 20:36:47 2019
-
-@author: areed145
-"""
-
 import dns
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient
 import pandas as pd
 import time
@@ -40,10 +32,10 @@ def get_current(sid):
     for key in keys_location:
         message[key] = convert(tree.find('location').find(key).text)
     message['observation_time_rfc822'] = pd.to_datetime(message['observation_time_rfc822'])
-    message['timestamp'] = datetime.utcnow()
+    message['timestamp'] = datetime.now(timezone.utc)
     message['topic'] = 'wx/raw'
     message['elevation'] = convert(message['elevation'][:-2])
-    message['ttl'] = datetime.utcnow()
+    message['ttl'] = datetime.now(timezone.utc)
     try:
         raw.insert_one(message)
         print(message)
@@ -64,7 +56,7 @@ def get_history(sid, m, d, y):
         for key in keys_location:
             message[key] = convert(tree[i].find('location').find(key).text)
         message['observation_time_rfc822'] = pd.to_datetime(message['observation_time_rfc822'])
-        message['timestamp'] = datetime.utcnow()
+        message['timestamp'] = datetime.now(timezone.utc)
         message['topic'] = 'wx/raw'
         message['elevation'] = convert(message['elevation'][:-2])
         try:
